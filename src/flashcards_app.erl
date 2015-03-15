@@ -20,6 +20,7 @@ ensure_app(App) ->
 		{error,{already_started,App}} ->
 			ok
 	end.
+
 start(normal, _Args) ->
 	io:format("===> FlashCard app starting...~n", []),
 	flashcards_sup:start_link().
@@ -27,15 +28,16 @@ start(normal, _Args) ->
 stop(_State) ->
 	io:format("===< FlashCard app stopped.~n", []),
 	ok.
+
 %% Simple Cowboy http routing.
 %% From example at
 %% https://github.com/extend/cowboy/tree/master/examples/hello_world
 start_phase(listen, _Type, _Args) ->
-
 	io:format("===> Starting handler.~n", []),
 	Dispatch = cowboy_router:compile(
 		[{'_', [
-		% {"/",                    handle_root,   []}
+			%{"/",                   handle_root,   []}
+
 			%% @todo dummy hello user for now.
 			{"/hello",              handle_user,  []}
 			]}
