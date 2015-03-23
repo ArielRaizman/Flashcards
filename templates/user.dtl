@@ -13,7 +13,7 @@
 <body>
   <!-- content is here -->
 <form method="post">
-	<div> {{card}} </div>
+	<div> {{card | safe}} </div>
 	<span class="score">
 		correct={{correct}} &nbsp; wrong={{wrong}}
 	</span>

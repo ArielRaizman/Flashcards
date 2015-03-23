@@ -26,7 +26,7 @@ handle_get(Req) ->
 		% parameters like {card, Value}
 		{wrong, W},
 		{correct, C},
-		{card, "B"}
+		{card, notesvg:name_to_svg("B4")}
 	]).
 
 handle_post(Req) ->
@@ -39,7 +39,7 @@ handle_post(Req) ->
 		% parameters like {card, Value}
 		{wrong, NewW},
 		{correct, NewC},
-		{card, "B"}
+		{card, notesvg:name_to_svg("B4")}
 	]).
 
 get_status(KeyVals) ->
