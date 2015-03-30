@@ -6,23 +6,106 @@
   <meta name="description" content="Hello's cards">
   <meta name="author" content="DaBlob">
   <style type="text/css">
-    /* style go here */
-    .score {float:right;}
+    /* adjust page to not have scroll bars and allign vh, vw with % */
+    html, body {
+      margin: 0;
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .header {
+      position: relative;
+      width: 100vw;
+      height: 6vw;
+      background: #eee;
+    }
+    .header div {
+      font-size: 3vw;
+      padding-left:2vw;
+      /* center the content vertically */
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+
+    .cards {
+      position: relative;
+      height: 35vw;
+      width: 96vw;
+      left: 2vw;
+      top: 2vw;
+    }
+    .cards > div {
+      position: absolute;
+      width: 30vw;
+      height: 30vw;
+      border: 1px solid #777;
+      border-radius: 3vw;
+      box-shadow: .5vw .5vw 2vw #999;
+    }
+    .cards div > div {
+      position: absolute;
+      font-size: 26vw;
+      /* center the content of answer */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .cards div > div > span {
+      /* style the octave number */
+      font-size: 6vw;
+      vertical-align: text-top;
+    }
+
+    .answer {
+      left: 35vw;
+    }
+   
+    .buttons {
+      position: relative;
+      width: 100vw;
+      height: 6vw;
+    }
+    .buttons button {
+      position: relative;
+      top: 50%;
+      transform: translate(5%, -50%);
+      font-size: 3vw;
+      height: 6vw;
+      width: 6vw;
+      margin: 1vw 0 0 1vw;
+    }
   </style>
 </head>
 <body>
-  <!-- content is here -->
-<form method="post">
-	<div> {{card | safe}} </div>
-	<span class="score">
-		correct={{correct}} &nbsp; wrong={{wrong}}
-	</span>
-	<br>
-	<br>
-	<button type="submit" name="d" value="1">d</button>
-	<button type="submit" name="b" value="1">b</button>
-	<input type="hidden" name="c" value="{{correct}}" />
-	<input type="hidden" name="w" value="{{wrong}}" />
-</form>
+  <form method="post">
+    <!-- status header -->
+    <div class="header ">
+      <div>
+        correct={{correct}} &nbsp; wrong={{wrong}}
+      </div>
+    </div>
+
+    <!-- cards content -->
+    <div class="cards">
+      <div>
+        {{card | safe}}
+    </div>
+      <div class="answer">
+        <div>B<span>4</span> </div>
+      </div>
+    </div>
+
+    <!-- buttons -->
+    <div class="buttons">
+      <button type="submit" name="d" value="1">d</button>
+      <button type="submit" name="b" value="1">b</button>
+    </div>
+
+    <!-- state -->
+    <input type="hidden" name="c" value="{{correct}}" />
+    <input type="hidden" name="w" value="{{wrong}}" />
+  </form>
 </body>
 </html>
