@@ -5,6 +5,17 @@
   <title>Hello's cards</title>
   <meta name="description" content="Hello's cards">
   <meta name="author" content="DaBlob">
+  <script type="text/javascript">
+    window.onload = function() {
+        if("{{cardstate}}" != "normal") {
+            var auto = setTimeout(function() {
+                  document.forms["cardform"].submit();
+                  clearTimeout(auto);
+              },
+              "{{cardstate}}" === "wrong" ? 2000 : 500);
+        }
+    }
+  </script>
   <style type="text/css">
     /* adjust page to not have scroll bars and allign vh, vw with % */
     html, body {
@@ -26,7 +37,9 @@
       /* center the content vertically */
       position: absolute;
       top: 50%;
-      transform: translate(0, -50%);
+      -webkit-transform: translate(0, -50%);
+         -moz-transform: translate(0, -50%);
+              transform: translate(0, -50%);
     }
 
     .cards {
@@ -50,7 +63,9 @@
       /* center the content of answer */
       top: 50%;
       left: 50%;
-      transform: translate(-50%,-50%);
+      -webkit-transform: translate(-50%,-50%);
+         -moz-transform: translate(-50%,-50%);
+              transform: translate(-50%,-50%);
     }
     .cards div > div > span {
       /* style the octave number */
@@ -70,16 +85,30 @@
     .buttons button {
       position: relative;
       top: 50%;
-      transform: translate(5%, -50%);
+      -webkit-transform: translate(5%, -50%);
+         -moz-transform: translate(5%, -50%);
+              transform: translate(5%, -50%);
       font-size: 3vw;
       height: 6vw;
       width: 6vw;
       margin: 1vw 0 0 1vw;
     }
+
+    .normal{
+      background-color:#eee;
+    }
+
+    .correct{
+      background-color: RGB(164, 240, 193);
+    }
+
+    .wrong{
+      background-color:#f99;
+    }
   </style>
 </head>
 <body>
-  <form method="post">
+  <form id="cardform" method="post">
     <!-- status header -->
     <div class="header ">
       <div>
@@ -92,20 +121,31 @@
       <div>
         {{card | safe}}
     </div>
-      <div class="answer">
-        <div>B<span>4</span> </div>
+{% if disabled %}
+      <div class="answer {{cardstate}}">
+        <div>{{cardletter}}<span>4</span> </div>
       </div>
+{% endif %}
     </div>
 
     <!-- buttons -->
     <div class="buttons">
-      <button type="submit" name="d" value="1">d</button>
-      <button type="submit" name="b" value="1">b</button>
+      <button {{disabled}} type="submit" name="choice" value="A">A</button>
+      <button {{disabled}} type="submit" name="choice" value="B">B</button>
+      <button {{disabled}} type="submit" name="choice" value="C">C</button>
+      <button {{disabled}} type="submit" name="choice" value="D">D</button>
+      <button {{disabled}} type="submit" name="choice" value="E">E</button>
+      <button {{disabled}} type="submit" name="choice" value="F">F</button>
+      <button {{disabled}} type="submit" name="choice" value="G">G</button>
     </div>
 
     <!-- state -->
     <input type="hidden" name="c" value="{{correct}}" />
     <input type="hidden" name="w" value="{{wrong}}" />
+    <input type="hidden" name="card" value="{{cardletter}}" />
+{% if disabled %}
+    <input type="hidden" name="answer" />
+{% endif %}
   </form>
 </body>
 </html>
