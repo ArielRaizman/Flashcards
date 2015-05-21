@@ -29,9 +29,9 @@ terminate(_Reason, _Req, _State) ->
 	ok.
 
 handle_get(Req) ->
-	W = 0,
-	C = 0,
-	Card = choose_card(),
+	Data = userdata:load("foo"),
+	Card = userdata:choose_card(Data),
+	{C, W} = userdata:stats(Data),
 	reply_dtl(Req, user_dtl, [
 		{wrong, W},
 		{correct, C},
@@ -42,24 +42,26 @@ handle_get(Req) ->
 	]).
 
 handle_answer(Req, KeyVals) ->
-	{C, W} = get_status(KeyVals),
-	{AddC, AddW, Card} = get_res(KeyVals),
-	NewW = W + AddW,
-	NewC = C + AddC,
+	Data = userdata:get_data(),
+	Event = get_res(KeyVals),
+	Data2 = userdata:update(Data, Event),
+	{C, W} = userdata:stats(Data2),
+	{_, _, Card} = Event, % TODO: this is ugly, Fix!
 	reply_dtl(Req, user_dtl, [
-		{wrong, NewW},
-		{correct, NewC},
+		{wrong, W},
+		{correct, C},
 		{card, notesvg:name_to_svg(Card ++"4")},
 		{cardletter, Card},
 		{cardoctave, 4},
-		{cardstate, get_state(AddC, AddW)},
+		{cardstate, get_state(Event)},
 		{disabled, "disabled"}
 	]).
 
 handle_question(Req, KeyVals) ->
-	{C, W} = get_status(KeyVals),
-	{_, _, Card} = get_res(KeyVals),
-	Card2 = choose_card(Card),
+    Data = userdata:get_data(),
+	{C, W} = userdata:stats(Data),
+
+	Card2 = userdata:choose_card(Data),
 	reply_dtl(Req, user_dtl, [
 		{wrong, W},
 		{correct, C},
@@ -69,9 +71,9 @@ handle_question(Req, KeyVals) ->
 		{cardstate, "normal"}
 	]).
 
-get_state(1, 0) -> "correct";
-get_state(0, 0) -> "normal";
-get_state(0, 1) -> "wrong".
+get_state({1, 0, _}) -> "correct";
+get_state({0, 0, _}) -> "normal";
+get_state({0, 1, _}) -> "wrong".
 
 
 get_status(KeyVals) ->
@@ -93,19 +95,6 @@ to_num(B) when is_binary(B) -> to_num(binary_to_list(B));
 to_num(L) when is_list(L)   -> list_to_integer(L);
 to_num(N)                   -> N.
 
-choose_card() ->
-	%% This is where the possible choices are currently stored
-	Cards = ["A","B", "C", "D", "E","F","G"],
-	choose_cards2(Cards).
-
-choose_card(Card) ->
-	%% This is where the possible choices are currently stored
-	Cards = ["A","B", "C", "D", "E","F","G"],
-	choose_cards2([C || C <- Cards, C =/= Card]).
-
-choose_cards2(Cards) ->
-	% Here we randomly choose a card out of Cards.
-	lists:nth(crypto:rand_uniform(0, length(Cards))+1, Cards).
 
 reply_dtl(Req, Template, Params) ->
 	{ok, Content} = Template:render(Params),
