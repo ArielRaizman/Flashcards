@@ -29,10 +29,11 @@ terminate(_Reason, _Req, _State) ->
 	ok.
 
 handle_get(Req) ->
-	Data = userdata:load("foo"),
+	{User, Req2} = cowboy_req:binding(user, Req),
+	Data = userdata:load(User),
 	Card = userdata:choose_card(Data),
 	{C, W} = userdata:stats(Data),
-	reply_dtl(Req, user_dtl, [
+	reply_dtl(Req2, user_dtl, [
 		{wrong, W},
 		{correct, C},
 		{card, notesvg:name_to_svg(Card ++ "4")},
@@ -42,12 +43,13 @@ handle_get(Req) ->
 	]).
 
 handle_answer(Req, KeyVals) ->
-	Data = userdata:get_data(),
+	{User, Req2} = cowboy_req:binding(user, Req),
+	Data = userdata:load(User),
 	Event = get_res(KeyVals),
 	Data2 = userdata:update(Data, Event),
 	{C, W} = userdata:stats(Data2),
 	{_, _, Card} = Event, % TODO: this is ugly, Fix!
-	reply_dtl(Req, user_dtl, [
+	reply_dtl(Req2, user_dtl, [
 		{wrong, W},
 		{correct, C},
 		{card, notesvg:name_to_svg(Card ++"4")},
@@ -58,11 +60,12 @@ handle_answer(Req, KeyVals) ->
 	]).
 
 handle_question(Req, KeyVals) ->
-    Data = userdata:get_data(),
+	{User, Req2} = cowboy_req:binding(user, Req),
+	Data = userdata:load(User),
 	{C, W} = userdata:stats(Data),
 
 	Card2 = userdata:choose_card(Data),
-	reply_dtl(Req, user_dtl, [
+	reply_dtl(Req2, user_dtl, [
 		{wrong, W},
 		{correct, C},
 		{card, notesvg:name_to_svg(Card2 ++"4")},

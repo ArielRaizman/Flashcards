@@ -1,6 +1,6 @@
 -module(userdata).
 
--export([load/1, stats/1, update/2, choose_card/1, get_data/0]).
+-export([load/1, stats/1, update/2, choose_card/1]).
 
 %% UserData - your data structure to represent everything we know about the user.
 %% {C, W, LastCard, FileName}
@@ -8,8 +8,9 @@
 %% And LastCard is either 'nothing' or the card, like "C".
 %% And FileName is the name of the user's file to persist the user data.
 
-load(_FileName) ->
-	read_data("foo"). % TODO: fix hardcoded name "foo"
+load(UserName) ->
+	FileName = <<"data/", UserName/binary>>,
+	read_data(FileName).
 
 % stats(Data) -> Status.
 stats({C, W, _LastCard, _FileName}) ->
@@ -30,9 +31,6 @@ choose_card({_, _, LastCard, _FileName}) ->
 choose_cards2(Cards) ->
 	% Here we randomly choose a card out of Cards.
 	lists:nth(crypto:rand_uniform(0, length(Cards))+1, Cards).
-
-get_data() ->
-	read_data("foo"). % TODO: fix hardcoded name "foo"
 
 
 read_data(FileName) ->

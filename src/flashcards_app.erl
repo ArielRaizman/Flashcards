@@ -39,8 +39,7 @@ start_phase(listen, _Type, _Args) ->
 		[{'_', [
 			%{"/",                   handle_root,   []}
 
-			%% @todo dummy hello user for now.
-			{"/hello",              handle_user,  []}
+			{"/:user",              handle_user,  []}
 			]}
 		]),
 
@@ -53,7 +52,6 @@ start_phase(listen, _Type, _Args) ->
 	ok.
 
 flashcards_404(404, Headers, <<>>, Req) ->
-	%Body = <<"hello">>,
 	Body = <<"<html><head>"
 		"<style>"
 		"html {"
